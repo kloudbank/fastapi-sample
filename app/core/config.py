@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = 'fastapi-sample'
     API_V1_STR: str = '/v1'
     SKIP_ROUTES: list = ['/redoc','/docs','/openapi.json']
+    SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
 
 # os.environ["APP_ENV"] = 'dev'
 
