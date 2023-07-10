@@ -32,4 +32,5 @@ def delete_board_by_id(id: int, db: Session):
     if db_board.first() is None:
         raise HTTPException(status_code=404, detail="Board not found")
     db_board.delete()
+    db.commit()
     return True

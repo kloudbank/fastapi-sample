@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-sample
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fastapi-sample
+  template:
+    metadata:
+      labels:
+        app: fastapi-sample
+    spec:
+      containers:
+      - env:
+        - name: APP_ENV
+          value: dev
+        name: fastapi-sample
+        image: kloudbank/fastapi-sample:0.0.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        readinessProbe:
+            failureThreshold: 3
+            successThreshold: 1
+            httpGet:
+                path: /redoc
+                port: 8000
+                scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 3
+        livenessProbe:
+            failureThreshold: 3
+            successThreshold: 1
+            httpGet:
+                path: /redoc
+                port: 8000
+                scheme: HTTP
+            initialDelaySeconds: 20
+            periodSeconds: 3
+        # resources:
+        #   limits:
+        #     cpu: 1000m
+        #     memory: 512Mi
+        #   requests:
+        #     cpu: 200m
+        #     memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-sample
+  labels:
+    app: fastapi-sample
+spec:
+  ports:
+  - port: 8000
+    targetPort: 8000
+    name: fastapi-sample
+  selector:
+    app: fastapi-sample
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fastapi-sample
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: fastapi-sample.nogada.kubepia.net
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: fastapi-sample
+            port:
+              number: 8000
