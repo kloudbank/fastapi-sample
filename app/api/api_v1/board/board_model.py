@@ -1,5 +1,4 @@
-from sqlalchemy import Column, Integer, String, DATETIME, func
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, TIMESTAMP, func
 
 from app.core.database import Base
 
@@ -11,5 +10,5 @@ class Board(Base):
     userid = Column(String)
     title = Column(String)
     content = Column(String)
-    createdat = Column(DATETIME, server_default=func.now())
-    updatedat = Column(DATETIME, onupdate=func.now())
+    createdat = Column(TIMESTAMP, server_default=func.now())
+    updatedat = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
